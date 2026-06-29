@@ -4,8 +4,16 @@
  */
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+import { existsSync } from "node:fs";
 
 const FILE = process.argv[2] ?? "example.sparkprofile";
+
+// The sample profile is not committed (it contained server data). Skip cleanly when absent
+// — e.g. in CI — so this stays a no-op rather than a failure. Pass a path to run it locally.
+if (!existsSync(FILE)) {
+  console.log(`smoke: "${FILE}" not present — skipping (provide a .sparkprofile path to run).`);
+  process.exit(0);
+}
 
 function text(res: any): any {
   const t = res.content?.[0]?.text ?? "";

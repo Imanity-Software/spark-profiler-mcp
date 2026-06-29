@@ -4,3 +4,8 @@ dist/
 .DS_Store
 .idea/
 *.tgz
+
+# spark profile data — may contain server configs / credentials; never commit
+*.sparkprofile
+*.sparkheap
+*.sparkhealth
