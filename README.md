@@ -1,5 +1,10 @@
 # spark-profiler-mcp
 
+[![npm](https://img.shields.io/npm/v/spark-profiler-mcp)](https://www.npmjs.com/package/spark-profiler-mcp)
+[![CI](https://github.com/Imanity-Software/spark-profiler-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/Imanity-Software/spark-profiler-mcp/actions/workflows/ci.yml)
+[![node](https://img.shields.io/node/v/spark-profiler-mcp)](https://www.npmjs.com/package/spark-profiler-mcp)
+[![license](https://img.shields.io/npm/l/spark-profiler-mcp)](LICENSE)
+
 [MCP](https://modelcontextprotocol.io) server that reads [spark](https://spark.lucko.me) profiler files so an AI can give **accurate Minecraft server tuning advice**.
 
 Parses spark's binary protobuf directly: no upload, no protoc. Ships a **diagnose** engine that knows TPS/MSPT/GC/heap thresholds and call-tree signatures (entity ticking, chunk gen, redstone, blocking I/O, plugin hogs, JVM flags), returns ranked findings with concrete fixes.
@@ -18,33 +23,32 @@ Input = local path, `https://spark.lucko.me/<key>` / bytebin URL, or bare bytebi
 
 Most tools (`diagnose`, `get_summary`, `get_platform_info`, `get_system_stats`, `get_health`) work on sampler **and** health files. `.sparkheap` → `get_heap_summary`. Call-tree tools = sampler only.
 
-## Install
+## Install (one line)
+
+Published to npm — no clone, no build; `npx` fetches and runs it:
 
 ```bash
-npm install
-npm run build
+claude mcp add spark-profiler -- npx -y spark-profiler-mcp
 ```
 
-## Use with Claude Code
-
-```bash
-claude mcp add spark-profiler -- node /absolute/path/to/spark-profiler-mcp/dist/index.js
-```
-
-Or in an MCP client config (`.mcp.json` / `claude_desktop_config.json`):
+Same thing as an MCP client config block (`.mcp.json` / `claude_desktop_config.json`):
 
 ```json
 {
   "mcpServers": {
-    "spark-profiler": {
-      "command": "node",
-      "args": ["/absolute/path/to/spark-profiler-mcp/dist/index.js"]
-    }
+    "spark-profiler": { "command": "npx", "args": ["-y", "spark-profiler-mcp"] }
   }
 }
 ```
 
-Then ask: *"Load example.sparkprofile and tell me what to tune."* Assistant calls `load_profile` → `diagnose` → drills in.
+Then ask: *"Load this.sparkprofile and tell me what to tune."* The assistant calls `load_profile` → `diagnose` → drills in.
+
+### From source (dev / unpublished)
+
+```bash
+npm install && npm run build
+claude mcp add spark-profiler -- node /absolute/path/to/spark-profiler-mcp/dist/index.js
+```
 
 ## Tools
 
@@ -80,6 +84,30 @@ npm test           # vitest: decode example, check analysis + diagnosis
 npm run smoke      # end-to-end over stdio
 npm run inspector  # @modelcontextprotocol/inspector
 ```
+
+## Publishing (maintainer)
+
+Releases are automated via GitHub Actions + **npm Trusted Publishing** (OIDC) — no npm token is
+stored anywhere. One-time setup on npmjs.com: the package → **Settings → Trusted Publisher** →
+GitHub Actions, with Organization `Imanity-Software`, Repository `spark-profiler-mcp`, Workflow
+`publish.yml`. Then to cut a release:
+
+```bash
+# bump "version" in package.json, then:
+git tag v0.1.1 && git push origin v0.1.1
+```
+
+`.github/workflows/publish.yml` builds, tests, and runs `npm publish` authenticated by OIDC, with
+**provenance generated automatically**. (Needs Node ≥ 22.14 + npm ≥ 11.5.1; the workflow upgrades
+npm itself.)
+
+`files` ships only `dist/` + `proto/` (schemas are loaded at runtime, so they must be included);
+the 24 MB example and tests are excluded.
+
+Manual fallback (no provenance): `npm login && npm publish` — `prepublishOnly` builds + tests first.
+
+Prefer not to use npm at all? `npx -y github:Imanity-Software/spark-profiler-mcp` also works — the
+`prepare` hook builds it on install.
 
 ## License
 

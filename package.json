@@ -1,8 +1,17 @@
 {
   "name": "spark-profiler-mcp",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "MCP server that reads lucko/spark profiler files (.sparkprofile/.sparkheap/.sparkhealth) and gives Minecraft server performance analysis + tuning advice.",
   "type": "module",
+  "author": "Imanity Software <leegod@imanity.dev>",
+  "homepage": "https://github.com/Imanity-Software/spark-profiler-mcp#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Imanity-Software/spark-profiler-mcp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Imanity-Software/spark-profiler-mcp/issues"
+  },
   "bin": {
     "spark-profiler-mcp": "dist/index.js"
   },
@@ -16,7 +25,12 @@
     "dev": "tsx src/index.ts",
     "smoke": "tsx scripts/smoke.ts",
     "test": "vitest run",
-    "inspector": "npx @modelcontextprotocol/inspector node dist/index.js"
+    "inspector": "npx @modelcontextprotocol/inspector node dist/index.js",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run build && npm run test"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "keywords": [
     "mcp",
