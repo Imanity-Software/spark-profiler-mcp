@@ -1,0 +1,40 @@
+{
+  "name": "spark-profiler-mcp",
+  "version": "0.1.0",
+  "description": "MCP server that reads lucko/spark profiler files (.sparkprofile/.sparkheap/.sparkhealth) and gives Minecraft server performance analysis + tuning advice.",
+  "type": "module",
+  "bin": {
+    "spark-profiler-mcp": "dist/index.js"
+  },
+  "files": [
+    "dist",
+    "proto"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "smoke": "tsx scripts/smoke.ts",
+    "test": "vitest run",
+    "inspector": "npx @modelcontextprotocol/inspector node dist/index.js"
+  },
+  "keywords": [
+    "mcp",
+    "spark",
+    "minecraft",
+    "profiler",
+    "performance"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "protobufjs": "^7.4.0",
+    "zod": "^3.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}
